@@ -1,0 +1,59 @@
+[
+  {
+    "name": "William",
+    "timestamp": "2026-03-01T00:00:00Z",
+    "type": "drep",
+    "id": "drep1yfpgzfymq6tt9c684e7vzata8r5pl4w84fmrjqeztdqw0sgpzw3nt",
+    "bulletPoints": [
+      "Constitutional delegate",
+      "Developer",
+      "In it for the long term"
+    ],
+    "socials": [
+      {
+        "platform": "twitter",
+        "url": "https://x.com/william00000010"
+      }
+    ]
+  },
+  {
+    "name": "Star Forge",
+    "timestamp": "2026-03-01T00:00:00Z",
+    "type": "spo",
+    "id": "pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c",
+    "bulletPoints": [
+      "🌟 Star Forge ⚡"
+    ],
+    "socials": []
+  },
+  {
+    "name": "CardanoYoda",
+    "timestamp": "2026-02-01T00:00:00Z",
+    "type": "drep",
+    "id": "drep1y2m0g4r66pyaw3p7u454wc0p4f0ygm8ueaev0mgd3tvwm7sskqwqp",
+    "bulletPoints": [
+      "Very active in Cardano",
+      "Writes thoughtful justifications"
+    ],
+    "socials": []
+  },
+  {
+    "name": "PRIDE",
+    "timestamp": "2026-02-01T00:00:00Z",
+    "type": "spo",
+    "id": "drep1yfpazkd0aqex0kd3vrhk47sjy0jqgq3xu6h2zv9wevfequcxyynwv",
+    "bulletPoints": [
+      "Very active."
+    ],
+    "socials": [
+      {
+        "platform": "website",
+        "url": "https://www.stakewithpride.org/"
+      },
+      {
+        "platform": "twitter",
+        "url": "https://x.com/StakeWithPride"
+      }
+    ]
+  }
+]
