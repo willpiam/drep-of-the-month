@@ -6,13 +6,18 @@
       "spoId": null,
       "bulletPoints": [
         "Constitutional delegate",
-        "Developer",
-        "In it for the long term"
+        "Developer - trying to push things forward wherever I can",
+        "In it for the long term", 
+        "Creator of drep-of-the-month"
       ],
       "socials": [
         {
           "platform": "twitter",
           "url": "https://x.com/william00000010"
+        },
+        {
+          "platform": "website",
+          "url": "https://projects.williamdoyle.ca"
         }
       ]
     },
@@ -21,7 +26,6 @@
       "drepId": null,
       "spoId": "pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c",
       "bulletPoints": [
-        "🌟 Star Forge ⚡",
         "OTG Cardano pool operated out of an RV"
       ],
       "socials": [
@@ -34,10 +38,10 @@
     {
       "name": "CardanoYoda",
       "drepId": "drep1y2m0g4r66pyaw3p7u454wc0p4f0ygm8ueaev0mgd3tvwm7sskqwqp",
-      "spoId": null,
+      "spoId": "pool1c3fjkls7d2aujud8y5xy5e0azu0ueatwn34u7jy3ql85ze3xya8",
       "bulletPoints": [
         "Very active in Cardano, especially on X",
-        "Writes thoughtful justifications"
+        "Writes thoughtful justifications as a drep"
       ],
       "socials": [
         {
@@ -52,6 +56,7 @@
       "spoId": "pool1j099ctc7kcc9fa78dz5qwsy2g0n96lrgletwxvxmyzh4zd7ck0j",
       "bulletPoints": [
         "Very active."
+        , "PRIDE leads #CardanoPride celebrations every June since 2021, and has donated $11k+ USD to 80+ causes and is a member of the Cardano Single Pool Alliance."
       ],
       "socials": [
         {
@@ -61,6 +66,150 @@
         {
           "platform": "twitter",
           "url": "https://x.com/StakeWithPride"
+        }
+      ]
+    },
+    {
+      "name": "EASY1",
+      "drepId": null,
+      "spoId": "pool1yr0cv3dtmhcfgqa6yetvmf769ngk89e6tepecmjrmjl2jzcw2lm",
+      "bulletPoints": [
+        "Also operates a midnight node and a world mobile earth node."
+      ],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": "https://x.com/CryptoJoe101"
+        },
+        {
+          "platform": "website",
+          "url": "https://www.easy1staking.com/"
+        }
+      ]
+    },
+    {
+      "name": "Listen To The Stones",
+      "drepId": "drep1ygd5gumlv8jnramte9z2zvksvncgt06hyds4k6naq52hq7c05svs",
+      "spoId": null,
+      "bulletPoints": [
+        "A very thoughtful community member"
+      ],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":"https://x.com/Gnobudyspecial"
+        }
+      ]
+    },
+    {
+      "name": "DAVE",
+      "drepId": null,
+      "spoId": "pool1t6n7rysk6wzm9wqxda6zxpzmm3j6256fs3mp06dc26n6503hhj4",
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":"https://x.com/ItsDave_ADA"
+        }
+      ]
+    },
+    {
+      "name": "Lace pool",
+      "drepId": null,
+      "spoId": "pool1cpr59c88ps8499gtgegr3muhclr7dln35g9a3rqmv4dkxg9n3h8",
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":"https://x.com/lacepool_com"
+        }
+      ]
+    },
+    {
+      "name": "",
+      "drepId": null,
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":""
+        }
+      ]
+    },
+    {
+      "name": "LaPetiteADA",
+      "drepId": null,
+      "spoId": "pool10fxpa6wkv0wc6wcmahcnz4wvvfx9m7547sevxrge3nfuv7yh8m0",
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":"https://x.com/LaPetiteADA"
+        }
+      ]
+    },
+    {
+      "name": "jonahkoch",
+      "drepId": "drep1yt8trnz8e5cnylmyygt0pyzrfw92rt9s42kg8t4rhm6t0dstyvmdn",
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":"https://x.com/jonahkoch"
+        }
+      ]
+    },
+    {
+      "name": "HEPHY Stake Pool | Mithril 🛡️| Icebreaker 🧊",
+      "drepId": "drep1y2zu74gt8sxtrxcngqsmrnupkzrtmlqshmvmm5qtuhxx6xqt7yhaw",
+      "spoId": "pool17n47upcpnzsdks0yd409nf79sg6hqy73twg87eddwh24uj745rt",
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":"https://x.com/HephyPool"
+        }
+      ]
+    },
+
+     {
+      "name": "",
+      "drepId": null,
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":""
+        }
+      ]
+    },
+
+     {
+      "name": "",
+      "drepId": null,
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":""
+        }
+      ]
+    },
+
+
+     {
+      "name": "",
+      "drepId": null,
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":""
         }
       ]
     }

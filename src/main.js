@@ -413,7 +413,8 @@ const PROTOCOL_PARAMS = {
             delegationIsError: false,
             showRandomPopup: false,
             randomDrep: null,
-            randomSpo: null
+            randomSpo: null,
+            showEntriesPopup: false
           };
         }
 
@@ -593,6 +594,16 @@ const PROTOCOL_PARAMS = {
 
         closeRandomPopup() {
           this.state.showRandomPopup = false;
+          this.render();
+        }
+
+        openEntriesPopup() {
+          this.state.showEntriesPopup = true;
+          this.render();
+        }
+
+        closeEntriesPopup() {
+          this.state.showEntriesPopup = false;
           this.render();
         }
 
@@ -791,7 +802,8 @@ const PROTOCOL_PARAMS = {
             delegationIsError,
             showRandomPopup,
             randomDrep,
-            randomSpo
+            randomSpo,
+            showEntriesPopup
           } = this.state;
 
           const style = `
@@ -883,12 +895,14 @@ const PROTOCOL_PARAMS = {
                 column-gap: 14px;
                 align-items: start;
               }
-              .random-row {
+              .utility-row {
                 margin-top: 18px;
                 display: flex;
                 justify-content: center;
+                gap: 10px;
+                flex-wrap: wrap;
               }
-              .random-trigger {
+              .utility-trigger {
                 border-radius: 10px;
                 padding: 10px 14px;
                 border: 1px solid var(--line);
@@ -962,6 +976,25 @@ const PROTOCOL_PARAMS = {
                 color: var(--muted);
                 text-align: center;
                 margin-top: 8px;
+              }
+              .entries-table-wrap {
+                margin-top: 8px;
+                overflow-x: auto;
+              }
+              .entries-table {
+                width: 100%;
+                border-collapse: collapse;
+              }
+              .entries-table th,
+              .entries-table td {
+                border: 1px solid var(--line);
+                padding: 8px 10px;
+                text-align: left;
+                vertical-align: top;
+                font-size: 0.9rem;
+              }
+              .entries-table th {
+                color: var(--muted);
               }
               .footer {
                 margin-top: clamp(42px, 9vh, 110px);
@@ -1052,6 +1085,18 @@ const PROTOCOL_PARAMS = {
           const randomAvailable = entities.some((entity) => typeof entity.drepId === "string") ||
             entities.some((entity) => typeof entity.spoId === "string");
 
+          const entriesTableRows = entities
+            .map((entity) => {
+              const drepLink = typeof entity.drepId === "string"
+                ? `<a href="https://cardanoscan.io/dRep/${encodeURIComponent(entity.drepId)}" target="_blank" rel="noreferrer noopener">${entity.drepId}</a>`
+                : "-";
+              const spoLink = typeof entity.spoId === "string"
+                ? `<a href="https://cardanoscan.io/pool/${encodeURIComponent(entity.spoId)}" target="_blank" rel="noreferrer noopener">${entity.spoId}</a>`
+                : "-";
+              return `<tr><td>${entity.name || "Unnamed"}</td><td>${drepLink}</td><td>${spoLink}</td></tr>`;
+            })
+            .join("");
+
           const popupHtml = showRandomPopup
             ? `<div class="modal-backdrop" id="random-modal-backdrop">
                 <div class="modal" role="dialog" aria-modal="true" aria-labelledby="random-modal-title">
@@ -1066,6 +1111,31 @@ const PROTOCOL_PARAMS = {
                   ${randomAvailable ? "" : `<p class="modal-empty">No entities are available for random selection.</p>`}
                   <div class="modal-actions">
                     <button id="random-spin" class="modal-spin" type="button">Spin Again</button>
+                  </div>
+                </div>
+              </div>`
+            : "";
+
+          const entriesPopupHtml = showEntriesPopup
+            ? `<div class="modal-backdrop" id="entries-modal-backdrop">
+                <div class="modal" role="dialog" aria-modal="true" aria-labelledby="entries-modal-title">
+                  <div class="modal-head">
+                    <h2 id="entries-modal-title">All Entries</h2>
+                    <button id="entries-close" class="modal-close" type="button">Close</button>
+                  </div>
+                  <div class="entries-table-wrap">
+                    <table class="entries-table">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>DRep (CardanoScan)</th>
+                          <th>SPO (CardanoScan)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${entriesTableRows || `<tr><td colspan="3">No entries available.</td></tr>`}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>`
@@ -1089,8 +1159,9 @@ const PROTOCOL_PARAMS = {
               <dotm-card id="spo-card"></dotm-card>
               <dotm-card id="drep-card"></dotm-card>
             </section>
-            <section class="random-row">
-              <button id="open-random" class="random-trigger" type="button">Choose Random DRep and SPO</button>
+            <section class="utility-row">
+              <button id="open-random" class="utility-trigger" type="button">Choose Random DRep and SPO</button>
+              <button id="open-entries" class="utility-trigger" type="button">View All Entries</button>
             </section>
             <section class="footer">
               <button id="previous" class="primary" type="button">Previous Entries</button>
@@ -1098,6 +1169,7 @@ const PROTOCOL_PARAMS = {
               <span class="status">${statusText}</span>
             </section>
             ${popupHtml}
+            ${entriesPopupHtml}
           `;
 
           const spoCard = root.getElementById("spo-card");
@@ -1106,10 +1178,12 @@ const PROTOCOL_PARAMS = {
           const currentButton = root.getElementById("current");
           const connectWalletButton = root.getElementById("connect-wallet");
           const openRandomButton = root.getElementById("open-random");
+          const openEntriesButton = root.getElementById("open-entries");
           const randomCloseButton = root.getElementById("random-close");
           const randomSpinButton = root.getElementById("random-spin");
           const randomDrepCard = root.getElementById("random-drep-card");
           const randomSpoCard = root.getElementById("random-spo-card");
+          const entriesCloseButton = root.getElementById("entries-close");
 
           if (spoCard) {
             spoCard.data = {
@@ -1148,6 +1222,10 @@ const PROTOCOL_PARAMS = {
             openRandomButton.addEventListener("click", () => this.openRandomPopup());
           }
 
+          if (openEntriesButton) {
+            openEntriesButton.addEventListener("click", () => this.openEntriesPopup());
+          }
+
           if (randomCloseButton) {
             randomCloseButton.addEventListener("click", () => this.closeRandomPopup());
           }
@@ -1157,6 +1235,10 @@ const PROTOCOL_PARAMS = {
               this.pickRandomChoices();
               this.render();
             });
+          }
+
+          if (entriesCloseButton) {
+            entriesCloseButton.addEventListener("click", () => this.closeEntriesPopup());
           }
 
           if (randomDrepCard) {
