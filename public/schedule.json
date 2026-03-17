@@ -21,7 +21,7 @@
         "timestamp": "2026-09-01T00:00:00Z"
     },
     {
-        "drepId": "",
+        "drepId": "drep1ygm9wxzrrdqpt0hek5kj7ys6tmsc8dycp7tkjwqxqrhjr6csq3s3t",
         "spoId": "pool10fxpa6wkv0wc6wcmahcnz4wvvfx9m7547sevxrge3nfuv7yh8m0",
         "timestamp": "2026-08-01T00:00:00Z"
     },
@@ -46,7 +46,7 @@
         "timestamp": "2026-04-01T00:00:00Z"
     },
     {
-      "drepId": "drep1yfpgzfymq6tt9c684e7vzata8r5pl4w84fmrjqeztdqw0sgpzw3nt",
+      "drepId": "",
       "spoId": "pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c",
       "timestamp": "2026-03-01T00:00:00Z"
     },

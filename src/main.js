@@ -438,7 +438,8 @@ const PROTOCOL_PARAMS = {
             randomSpo: null,
             showEntriesPopup: false,
             showEntityDetailPopup: false,
-            detailEntity: null
+            detailEntity: null,
+            showAboutPopup: false
           };
         }
 
@@ -799,6 +800,16 @@ const PROTOCOL_PARAMS = {
           this.render();
         }
 
+        openAboutPopup() {
+          this.state.showAboutPopup = true;
+          this.render();
+        }
+
+        closeAboutPopup() {
+          this.state.showAboutPopup = false;
+          this.render();
+        }
+
         async delegate(entry, cip20MsgOverride) {
           if (!entry || !entry.id) return;
           try {
@@ -855,18 +866,67 @@ const PROTOCOL_PARAMS = {
             randomSpo,
             showEntriesPopup,
             showEntityDetailPopup,
-            detailEntity
+            detailEntity,
+            showAboutPopup
           } = this.state;
 
           const style = `
             <style>
               .header {
                 margin-bottom: 18px;
+                position: relative;
               }
               h1 {
                 font-size: clamp(1.35rem, 2.2vw, 2rem);
                 margin: 0 0 8px;
                 line-height: 1.2;
+              }
+              .about-btn {
+                position: absolute;
+                top: 0;
+                right: 0;
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                border: 1px solid var(--line);
+                background: var(--card);
+                color: var(--text);
+                font-size: 1.1rem;
+                cursor: pointer;
+                display: grid;
+                place-items: center;
+                line-height: 1;
+              }
+              .about-btn:hover {
+                background: color-mix(in srgb, var(--accent) 14%, transparent);
+                border-color: color-mix(in srgb, var(--accent) 44%, var(--line));
+              }
+              .about-links {
+                list-style: none;
+                padding: 0;
+                margin: 14px 0 0;
+              }
+              .about-links li {
+                margin: 10px 0;
+                line-height: 1.5;
+              }
+              .about-links a {
+                color: var(--accent);
+                text-decoration: none;
+              }
+              .about-links a:hover {
+                text-decoration: underline;
+              }
+              .about-section {
+                margin-top: 16px;
+                padding-top: 14px;
+                border-top: 1px solid var(--line);
+              }
+              .about-section p {
+                margin: 6px 0;
+                font-size: 0.92rem;
+                color: var(--muted);
+                line-height: 1.5;
               }
               .subtitle {
                 color: var(--muted);
@@ -1211,13 +1271,9 @@ const PROTOCOL_PARAMS = {
 
           const entriesTableRows = entities
             .map((entity, idx) => {
-              const drepLink = typeof entity.drepId === "string"
-                ? `<a href="https://cardanoscan.io/dRep/${encodeURIComponent(entity.drepId)}" target="_blank" rel="noreferrer noopener">${entity.drepId}</a>`
-                : "-";
-              const spoLink = typeof entity.spoId === "string"
-                ? `<a href="https://cardanoscan.io/pool/${encodeURIComponent(entity.spoId)}" target="_blank" rel="noreferrer noopener">${entity.spoId}</a>`
-                : "-";
-              return `<tr><td>${entity.name || "Unnamed"}</td><td><button class="entry-view-btn" data-entity-index="${idx}" type="button">View</button></td><td>${drepLink}</td><td>${spoLink}</td></tr>`;
+              const drepCheck = typeof entity.drepId === "string" ? `<span style="color:var(--accent-2)">&#10003;</span>` : "";
+              const spoCheck = typeof entity.spoId === "string" ? `<span style="color:var(--accent-2)">&#10003;</span>` : "";
+              return `<tr><td>${entity.name || "Unnamed"}</td><td><button class="entry-view-btn" data-entity-index="${idx}" type="button">View</button></td><td style="text-align:center">${drepCheck}</td><td style="text-align:center">${spoCheck}</td></tr>`;
             })
             .join("");
 
@@ -1256,8 +1312,8 @@ const PROTOCOL_PARAMS = {
                         <tr>
                           <th>Name</th>
                           <th>Actions</th>
-                          <th>DRep (CardanoScan)</th>
-                          <th>SPO (CardanoScan)</th>
+                          <th>DRep</th>
+                          <th>SPO</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1329,6 +1385,7 @@ const PROTOCOL_PARAMS = {
           root.innerHTML = `
             ${style}
             <section class="header">
+              <button id="open-about" class="about-btn" type="button" title="About this project">?</button>
               <h1>DRep & SPO of the Month</h1>
               <p class="subtitle">Scan the QR code or use the delegate button to support this month's featured members.</p>
               <div class="wallet-row">
@@ -1359,6 +1416,36 @@ const PROTOCOL_PARAMS = {
             ${popupHtml}
             ${entriesPopupHtml}
             ${detailPopupHtml}
+            ${showAboutPopup
+              ? `<div class="modal-backdrop" id="about-modal-backdrop">
+                  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="about-modal-title" style="max-width:560px">
+                    <div class="modal-head">
+                      <h2 id="about-modal-title">About This Project</h2>
+                      <button id="about-close" class="modal-close" type="button">Close</button>
+                    </div>
+                    <p style="margin:8px 0;font-size:0.92rem;color:var(--muted)">A community tool for discovering and delegating to Cardano DReps and Stake Pool Operators.</p>
+                    <ul class="about-links">
+                      <li><a href="https://github.com/willpiam/drep-of-the-month" target="_blank" rel="noreferrer noopener">GitHub Repository</a></li>
+                      <li><a href="https://projects.williamdoyle.ca" target="_blank" rel="noreferrer noopener">Other Projects by William</a></li>
+                      <li><a href="https://app.ens.domains/williamdoyle.eth" target="_blank" rel="noreferrer noopener">williamdoyle.eth</a> (includes a Cardano address for tips)</li>
+                      <li>Tips also accepted via ADA Handle: <a href="https://handle.me/wildoy" target="_blank" rel="noreferrer noopener">$wildoy</a></li>
+                    </ul>
+                    <div class="about-section">
+                      <p><strong>Contact / Nominations</strong></p>
+                      <p>Want to be added to the list, nominate someone, or report a bug? Reach out on <a href="https://x.com/william00000010" target="_blank" rel="noreferrer noopener">X (Twitter)</a>.</p>
+                    </div>
+                    <div class="about-section">
+                      <p><strong>Delegate to the creator</strong></p>
+                      <p>William is a DRep under the ADA Handle <a href="https://handle.me/computerman" target="_blank" rel="noreferrer noopener">$computerman</a>.</p>
+                      <p>DRep ID: <a href="https://cardanoscan.io/dRep/drep1yfpgzfymq6tt9c684e7vzata8r5pl4w84fmrjqeztdqw0sgpzw3nt" target="_blank" rel="noreferrer noopener">drep1yfpgzfymq6tt9c684e7vzata8r5pl4w84fmrjqeztdqw0sgpzw3nt</a></p>
+                      <div style="margin-top:10px">
+                        <button id="about-delegate-creator" type="button" ${walletConnected ? "" : "disabled"} title="${walletConnected ? "" : "Connect wallet to delegate"}" style="border-radius:10px;padding:10px 14px;border:1px solid var(--line);cursor:pointer;background:color-mix(in srgb, var(--accent) 22%, transparent);border-color:color-mix(in srgb, var(--accent) 44%, var(--line));color:var(--text);font-size:0.9rem">Delegate to William as DRep</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>`
+              : ""
+            }
           `;
 
           const spoCard = root.getElementById("spo-card");
@@ -1518,6 +1605,27 @@ const PROTOCOL_PARAMS = {
               if (key) this.connectWallet(key);
             });
           });
+
+          const openAboutButton = root.getElementById("open-about");
+          const aboutCloseButton = root.getElementById("about-close");
+          const aboutDelegateCreatorButton = root.getElementById("about-delegate-creator");
+
+          if (openAboutButton) {
+            openAboutButton.addEventListener("click", () => this.openAboutPopup());
+          }
+
+          if (aboutCloseButton) {
+            aboutCloseButton.addEventListener("click", () => this.closeAboutPopup());
+          }
+
+          if (aboutDelegateCreatorButton) {
+            aboutDelegateCreatorButton.addEventListener("click", () => {
+              this.delegate(
+                { id: "drep1yfpgzfymq6tt9c684e7vzata8r5pl4w84fmrjqeztdqw0sgpzw3nt", name: "William", timestamp: new Date().toISOString() },
+                "Delegate to William ($computerman) as DRep"
+              );
+            });
+          }
         }
       }
       customElements.define("dotm-app", DotmApp);
