@@ -188,6 +188,27 @@
     },
 
      {
+      "name": "Pi Lanningham",
+      "drepId": "drep158mfwdv7lvqzg0yrdxwhsmkq5406nmvw4yvjyyfcawlwus2eylt",
+      "spoId": "pool1x9q4jf3zwftwygeeulku8xtlywmtmzwxjk2g3fz3j5mlwjqnr3p",
+      "bulletPoints": [
+        "CTO at Sundae Labs",
+        "Very active in the Cardano development scene"
+      ],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":"https://x.com/Quantumplation"
+        },
+        {
+          "platform": "website",
+          "url":"http://314pool.com"
+        }
+      ]
+    },
+
+
+     {
       "name": "",
       "drepId": null,
       "spoId": null,
@@ -201,7 +222,34 @@
     },
 
 
-     {
+    {
+      "name": "",
+      "drepId": null,
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":""
+        }
+      ]
+    },
+
+
+    {
+      "name": "",
+      "drepId": null,
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":""
+        }
+      ]
+    },
+
+    {
       "name": "",
       "drepId": null,
       "spoId": null,
