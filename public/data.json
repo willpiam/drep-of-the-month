@@ -1,0 +1,68 @@
+{
+  "entities": [
+    {
+      "name": "William",
+      "drepId": "drep1yfpgzfymq6tt9c684e7vzata8r5pl4w84fmrjqeztdqw0sgpzw3nt",
+      "spoId": null,
+      "bulletPoints": [
+        "Constitutional delegate",
+        "Developer",
+        "In it for the long term"
+      ],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": "https://x.com/william00000010"
+        }
+      ]
+    },
+    {
+      "name": "Star Forge",
+      "drepId": null,
+      "spoId": "pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c",
+      "bulletPoints": [
+        "🌟 Star Forge ⚡",
+        "OTG Cardano pool operated out of an RV"
+      ],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": "https://x.com/Star_Forge_Pool"
+        }
+      ]
+    },
+    {
+      "name": "CardanoYoda",
+      "drepId": "drep1y2m0g4r66pyaw3p7u454wc0p4f0ygm8ueaev0mgd3tvwm7sskqwqp",
+      "spoId": null,
+      "bulletPoints": [
+        "Very active in Cardano, especially on X",
+        "Writes thoughtful justifications"
+      ],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": "https://x.com/JaromirTesar"
+        }
+      ]
+    },
+    {
+      "name": "PRIDE",
+      "drepId": "drep1yfpazkd0aqex0kd3vrhk47sjy0jqgq3xu6h2zv9wevfequcxyynwv",
+      "spoId": "pool1j099ctc7kcc9fa78dz5qwsy2g0n96lrgletwxvxmyzh4zd7ck0j",
+      "bulletPoints": [
+        "Very active."
+      ],
+      "socials": [
+        {
+          "platform": "website",
+          "url": "https://www.stakewithpride.org/"
+        },
+        {
+          "platform": "twitter",
+          "url": "https://x.com/StakeWithPride"
+        }
+      ]
+    }
+  ]
+}

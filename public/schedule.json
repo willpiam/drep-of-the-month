@@ -1,0 +1,14 @@
+{
+  "schedule": [
+    {
+      "drepId": "drep1yfpgzfymq6tt9c684e7vzata8r5pl4w84fmrjqeztdqw0sgpzw3nt",
+      "spoId": "pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c",
+      "timestamp": "2026-03-01T00:00:00Z"
+    },
+    {
+      "drepId": "drep1y2m0g4r66pyaw3p7u454wc0p4f0ygm8ueaev0mgd3tvwm7sskqwqp",
+      "spoId": "pool1j099ctc7kcc9fa78dz5qwsy2g0n96lrgletwxvxmyzh4zd7ck0j",
+      "timestamp": "2026-02-01T00:00:00Z"
+    }
+  ]
+}
