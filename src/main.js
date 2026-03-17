@@ -111,6 +111,28 @@ const PROTOCOL_PARAMS = {
         return Array.from(arr, (b) => b.toString(16).padStart(2, "0")).join("");
       }
 
+      function splitCip20Message(message, maxBytes = 64) {
+        const text = String(message || "");
+        const encoder = new TextEncoder();
+        const chunks = [];
+        let current = "";
+        let currentBytes = 0;
+
+        for (const char of text) {
+          const charBytes = encoder.encode(char).length;
+          if (currentBytes + charBytes > maxBytes) {
+            chunks.push(current);
+            current = char;
+            currentBytes = charBytes;
+          } else {
+            current += char;
+            currentBytes += charBytes;
+          }
+        }
+        if (current) chunks.push(current);
+        return chunks.length ? chunks : [""];
+      }
+
       function hexToBech32Address(hex) {
         if (!hex || hex.length < 2) return hex || "";
         const bytes = hexToBytes(hex);
@@ -414,7 +436,9 @@ const PROTOCOL_PARAMS = {
             showRandomPopup: false,
             randomDrep: null,
             randomSpo: null,
-            showEntriesPopup: false
+            showEntriesPopup: false,
+            showEntityDetailPopup: false,
+            detailEntity: null
           };
         }
 
@@ -565,6 +589,162 @@ const PROTOCOL_PARAMS = {
           this.render();
         }
 
+        formatMonthYear(timestamp) {
+          const date = new Date(timestamp);
+          if (Number.isNaN(date.getTime())) return "Unknown period";
+          const monthName = date.toLocaleString(undefined, { month: "long", timeZone: "UTC" });
+          const year = date.getUTCFullYear();
+          return `${monthName} ${year}`;
+        }
+
+        getSingleDelegationMessage(entry) {
+          const idPrefix = (entry?.id || "").split("1")[0];
+          const delegType = idPrefix === "drep" ? "DRep" : "SPO";
+          return `Delegate to ${delegType} of the month for ${this.formatMonthYear(entry?.timestamp)}`;
+        }
+
+        createDelegationCertificate(CSL, stakeCred, delegationId) {
+          const idPrefix = (delegationId || "").split("1")[0];
+
+          if (idPrefix === "drep") {
+            const decoded = bech32Decode(delegationId);
+            const credTypeByte = decoded.bytes[0];
+            const hashBytes = decoded.bytes.slice(1);
+
+            let drep;
+            if (credTypeByte === 0x22 || credTypeByte === 0x02) {
+              drep = CSL.DRep.new_key_hash(CSL.Ed25519KeyHash.from_bytes(hashBytes));
+            } else if (credTypeByte === 0x23 || credTypeByte === 0x03) {
+              drep = CSL.DRep.new_script_hash(CSL.ScriptHash.from_bytes(hashBytes));
+            } else {
+              drep = CSL.DRep.new_key_hash(CSL.Ed25519KeyHash.from_bytes(decoded.bytes));
+            }
+
+            return CSL.Certificate.new_vote_delegation(
+              CSL.VoteDelegation.new(stakeCred, drep)
+            );
+          }
+
+          if (idPrefix === "pool") {
+            const decoded = bech32Decode(delegationId);
+            const poolKeyHash = CSL.Ed25519KeyHash.from_bytes(decoded.bytes);
+            return CSL.Certificate.new_stake_delegation(
+              CSL.StakeDelegation.new(stakeCred, poolKeyHash)
+            );
+          }
+
+          throw new Error("Unrecognised ID format. Expected drep1... or pool1... prefix.");
+        }
+
+        async submitDelegationTx(delegationIds, cip20Msg) {
+          const CSL = await getCSL();
+          const api = this.state.walletApi;
+
+          if (!api) {
+            this.setDelegationStatus("Please connect your wallet first.", true);
+            return;
+          }
+          if (!CSL) {
+            this.setDelegationStatus(
+              "Transaction library is still loading. Please wait a moment and try again.",
+              true
+            );
+            return;
+          }
+
+          this.setDelegationStatus("Building transaction...");
+
+          const currentSlot = getCurrentSlot();
+          const utxoHexList = (await api.getUtxos()) || [];
+          const changeAddrHex = await api.getChangeAddress();
+          const rewardAddrHexList = (await api.getRewardAddresses()) || [];
+
+          if (!rewardAddrHexList.length) {
+            this.setDelegationStatus(
+              "No stake/reward address found in wallet. Ensure your wallet has a registered stake key.",
+              true
+            );
+            return;
+          }
+
+          const rewardAddr = CSL.RewardAddress.from_address(
+            CSL.Address.from_bytes(hexToUint8Array(rewardAddrHexList[0]))
+          );
+          if (!rewardAddr) {
+            this.setDelegationStatus("Could not parse reward address.", true);
+            return;
+          }
+          const stakeCred = rewardAddr.payment_cred();
+
+          const linearFee = CSL.LinearFee.new(
+            CSL.BigNum.from_str(PROTOCOL_PARAMS.minFeeA),
+            CSL.BigNum.from_str(PROTOCOL_PARAMS.minFeeB)
+          );
+
+          const txBuilderCfg = CSL.TransactionBuilderConfigBuilder.new()
+            .fee_algo(linearFee)
+            .pool_deposit(CSL.BigNum.from_str(PROTOCOL_PARAMS.poolDeposit))
+            .key_deposit(CSL.BigNum.from_str(PROTOCOL_PARAMS.keyDeposit))
+            .coins_per_utxo_byte(CSL.BigNum.from_str(PROTOCOL_PARAMS.coinsPerUtxoByte))
+            .max_value_size(PROTOCOL_PARAMS.maxValSize)
+            .max_tx_size(PROTOCOL_PARAMS.maxTxSize)
+            .build();
+
+          const txBuilder = CSL.TransactionBuilder.new(txBuilderCfg);
+          const certs = CSL.Certificates.new();
+          for (const delegationId of delegationIds) {
+            certs.add(this.createDelegationCertificate(CSL, stakeCred, delegationId));
+          }
+          txBuilder.set_certs(certs);
+
+          const metadataMap = CSL.MetadataMap.new();
+          const msgList = CSL.MetadataList.new();
+          for (const chunk of splitCip20Message(cip20Msg, 64)) {
+            msgList.add(CSL.TransactionMetadatum.new_text(chunk));
+          }
+          metadataMap.insert(
+            CSL.TransactionMetadatum.new_text("msg"),
+            CSL.TransactionMetadatum.new_list(msgList)
+          );
+
+          const auxData = CSL.AuxiliaryData.new();
+          const metadata = CSL.GeneralTransactionMetadata.new();
+          metadata.insert(CSL.BigNum.from_str("674"), CSL.TransactionMetadatum.new_map(metadataMap));
+          auxData.set_metadata(metadata);
+          txBuilder.set_auxiliary_data(auxData);
+
+          const utxos = CSL.TransactionUnspentOutputs.new();
+          for (const hex of utxoHexList) {
+            utxos.add(CSL.TransactionUnspentOutput.from_bytes(hexToUint8Array(hex)));
+          }
+
+          txBuilder.set_ttl(currentSlot + 7200);
+          txBuilder.add_inputs_from(utxos, CSL.CoinSelectionStrategyCIP2.LargestFirst);
+          txBuilder.add_change_if_needed(CSL.Address.from_bytes(hexToUint8Array(changeAddrHex)));
+
+          const unsignedTx = txBuilder.build_tx();
+          const unsignedTxHex = uint8ArrayToHex(unsignedTx.to_bytes());
+
+          this.setDelegationStatus("Please sign the transaction in your wallet...");
+          const witnessHex = await api.signTx(unsignedTxHex, true);
+
+          const witnessSet = CSL.TransactionWitnessSet.from_bytes(hexToUint8Array(witnessHex));
+          const signedTx = CSL.Transaction.new(
+            unsignedTx.body(),
+            witnessSet,
+            unsignedTx.auxiliary_data()
+          );
+          const signedTxHex = uint8ArrayToHex(signedTx.to_bytes());
+
+          this.setDelegationStatus("Submitting transaction...");
+          const txHash = await api.submitTx(signedTxHex);
+          this.setDelegationStatus(
+            `Delegation submitted! TX: <a href="https://cardanoscan.io/transaction/${encodeURIComponent(
+              txHash
+            )}" target="_blank" rel="noreferrer noopener">${txHash}</a>`
+          );
+        }
+
         pickRandomChoices() {
           const entities = Array.isArray(this.state.entities) ? this.state.entities : [];
           const drepCandidates = entities.filter((entity) => typeof entity.drepId === "string");
@@ -607,165 +787,35 @@ const PROTOCOL_PARAMS = {
           this.render();
         }
 
-        async delegate(entry) {
+        openEntityDetailPopup(entity) {
+          this.state.detailEntity = entity;
+          this.state.showEntityDetailPopup = true;
+          this.render();
+        }
+
+        closeEntityDetailPopup() {
+          this.state.showEntityDetailPopup = false;
+          this.state.detailEntity = null;
+          this.render();
+        }
+
+        async delegate(entry, cip20MsgOverride) {
           if (!entry || !entry.id) return;
-          const CSL = await getCSL();
-          const api = this.state.walletApi;
-
-          if (!api) {
-            this.setDelegationStatus("Please connect your wallet first.", true);
-            return;
+          try {
+            const cip20Msg = cip20MsgOverride || this.getSingleDelegationMessage(entry);
+            await this.submitDelegationTx([entry.id], cip20Msg);
+          } catch (err) {
+            const msg =
+              err && typeof err === "object" && err.message ? err.message : String(err);
+            this.setDelegationStatus(`Delegation failed: ${msg}`, true);
           }
-          if (!CSL) {
-            this.setDelegationStatus(
-              "Transaction library is still loading. Please wait a moment and try again.",
-              true
-            );
-            return;
-          }
+        }
 
-          this.setDelegationStatus("Building transaction...");
+        async delegateBoth(drepEntry, spoEntry, cip20Msg) {
+          if (!drepEntry?.id || !spoEntry?.id) return;
 
           try {
-            /* 1. Local protocol params + slot (no external API needed) */
-            const currentSlot = getCurrentSlot();
-
-            /* 2. Wallet data */
-            const utxoHexList = (await api.getUtxos()) || [];
-            const changeAddrHex = await api.getChangeAddress();
-            const rewardAddrHexList = (await api.getRewardAddresses()) || [];
-
-            if (!rewardAddrHexList.length) {
-              this.setDelegationStatus(
-                "No stake/reward address found in wallet. Ensure your wallet has a registered stake key.",
-                true
-              );
-              return;
-            }
-
-            /* 3. Derive stake credential from reward address */
-            const rewardAddr = CSL.RewardAddress.from_address(
-              CSL.Address.from_bytes(hexToUint8Array(rewardAddrHexList[0]))
-            );
-            if (!rewardAddr) {
-              this.setDelegationStatus("Could not parse reward address.", true);
-              return;
-            }
-            const stakeCred = rewardAddr.payment_cred();
-
-            /* 4. Build the appropriate certificate */
-            let cert;
-            const idPrefix = entry.id.split("1")[0];
-
-            if (idPrefix === "drep") {
-              /* DRep vote delegation (Conway era) */
-              const decoded = bech32Decode(entry.id);
-              const credTypeByte = decoded.bytes[0];
-              const hashBytes = decoded.bytes.slice(1);
-
-              let drep;
-              if (credTypeByte === 0x22 || credTypeByte === 0x02) {
-                drep = CSL.DRep.new_key_hash(CSL.Ed25519KeyHash.from_bytes(hashBytes));
-              } else if (credTypeByte === 0x23 || credTypeByte === 0x03) {
-                drep = CSL.DRep.new_script_hash(CSL.ScriptHash.from_bytes(hashBytes));
-              } else {
-                drep = CSL.DRep.new_key_hash(CSL.Ed25519KeyHash.from_bytes(decoded.bytes));
-              }
-
-              cert = CSL.Certificate.new_vote_delegation(
-                CSL.VoteDelegation.new(stakeCred, drep)
-              );
-            } else if (idPrefix === "pool") {
-              /* SPO stake delegation */
-              const decoded = bech32Decode(entry.id);
-              const poolKeyHash = CSL.Ed25519KeyHash.from_bytes(decoded.bytes);
-              cert = CSL.Certificate.new_stake_delegation(
-                CSL.StakeDelegation.new(stakeCred, poolKeyHash)
-              );
-            } else {
-              this.setDelegationStatus(
-                "Unrecognised ID format. Expected drep1... or pool1... prefix.",
-                true
-              );
-              return;
-            }
-
-            /* 5. Build transaction */
-            const linearFee = CSL.LinearFee.new(
-              CSL.BigNum.from_str(PROTOCOL_PARAMS.minFeeA),
-              CSL.BigNum.from_str(PROTOCOL_PARAMS.minFeeB)
-            );
-
-            const txBuilderCfg = CSL.TransactionBuilderConfigBuilder.new()
-              .fee_algo(linearFee)
-              .pool_deposit(CSL.BigNum.from_str(PROTOCOL_PARAMS.poolDeposit))
-              .key_deposit(CSL.BigNum.from_str(PROTOCOL_PARAMS.keyDeposit))
-              .coins_per_utxo_byte(CSL.BigNum.from_str(PROTOCOL_PARAMS.coinsPerUtxoByte))
-              .max_value_size(PROTOCOL_PARAMS.maxValSize)
-              .max_tx_size(PROTOCOL_PARAMS.maxTxSize)
-              .build();
-
-            const txBuilder = CSL.TransactionBuilder.new(txBuilderCfg);
-            const certs = CSL.Certificates.new();
-            certs.add(cert);
-            txBuilder.set_certs(certs);
-
-            /* CIP-20 transaction message (metadata label 674) */
-            const entryDate = new Date(entry.timestamp);
-            const monthName = entryDate.toLocaleString(undefined, { month: "long", timeZone: "UTC" });
-            const year = entryDate.getUTCFullYear();
-            const delegType = idPrefix === "drep" ? "DRep" : "SPO";
-            const cip20Msg = `Delegate to ${delegType} of the month for ${monthName} ${year}`;
-
-            const metadataMap = CSL.MetadataMap.new();
-            const msgList = CSL.MetadataList.new();
-            msgList.add(CSL.TransactionMetadatum.new_text(cip20Msg));
-            metadataMap.insert(
-              CSL.TransactionMetadatum.new_text("msg"),
-              CSL.TransactionMetadatum.new_list(msgList)
-            );
-
-            const auxData = CSL.AuxiliaryData.new();
-            const metadata = CSL.GeneralTransactionMetadata.new();
-            metadata.insert(CSL.BigNum.from_str("674"), CSL.TransactionMetadatum.new_map(metadataMap));
-            auxData.set_metadata(metadata);
-            txBuilder.set_auxiliary_data(auxData);
-
-            const utxos = CSL.TransactionUnspentOutputs.new();
-            for (const hex of utxoHexList) {
-              utxos.add(CSL.TransactionUnspentOutput.from_bytes(hexToUint8Array(hex)));
-            }
-
-            txBuilder.set_ttl(currentSlot + 7200);
-            txBuilder.add_inputs_from(utxos, CSL.CoinSelectionStrategyCIP2.LargestFirst);
-            txBuilder.add_change_if_needed(CSL.Address.from_bytes(hexToUint8Array(changeAddrHex)));
-
-            const unsignedTx = txBuilder.build_tx();
-            const unsignedTxHex = uint8ArrayToHex(unsignedTx.to_bytes());
-
-            this.setDelegationStatus("Please sign the transaction in your wallet...");
-
-            /* 6. Sign */
-            const witnessHex = await api.signTx(unsignedTxHex, true);
-
-            /* 7. Assemble signed transaction */
-            const witnessSet = CSL.TransactionWitnessSet.from_bytes(hexToUint8Array(witnessHex));
-            const signedTx = CSL.Transaction.new(
-              unsignedTx.body(),
-              witnessSet,
-              unsignedTx.auxiliary_data()
-            );
-            const signedTxHex = uint8ArrayToHex(signedTx.to_bytes());
-
-            this.setDelegationStatus("Submitting transaction...");
-
-            /* 8. Submit */
-            const txHash = await api.submitTx(signedTxHex);
-            this.setDelegationStatus(
-              `Delegation submitted! TX: <a href="https://cardanoscan.io/transaction/${encodeURIComponent(
-                txHash
-              )}" target="_blank" rel="noreferrer noopener">${txHash}</a>`
-            );
+            await this.submitDelegationTx([drepEntry.id, spoEntry.id], cip20Msg);
           } catch (err) {
             const msg =
               err && typeof err === "object" && err.message ? err.message : String(err);
@@ -803,7 +853,9 @@ const PROTOCOL_PARAMS = {
             showRandomPopup,
             randomDrep,
             randomSpo,
-            showEntriesPopup
+            showEntriesPopup,
+            showEntityDetailPopup,
+            detailEntity
           } = this.state;
 
           const style = `
@@ -912,6 +964,28 @@ const PROTOCOL_PARAMS = {
                 color: var(--text);
                 font-size: 0.9rem;
               }
+              .delegate-both {
+                border-radius: 10px;
+                padding: 10px 14px;
+                border: 1px solid var(--line);
+                cursor: pointer;
+                background: color-mix(in srgb, var(--accent-2) 24%, transparent);
+                border-color: color-mix(in srgb, var(--accent-2) 44%, var(--line));
+                color: var(--text);
+                font-size: 0.9rem;
+              }
+              .delegate-both:disabled {
+                opacity: 0.45;
+                cursor: not-allowed;
+              }
+              .pair-actions {
+                margin-top: 12px;
+                display: flex;
+                justify-content: center;
+              }
+              .modal-pair-actions {
+                margin-top: clamp(28px, 7vh, 72px);
+              }
               @media (min-width: 768px) {
                 .grid {
                   grid-template-columns: 1fr 1fr;
@@ -928,7 +1002,7 @@ const PROTOCOL_PARAMS = {
                 z-index: 999;
               }
               .modal {
-                width: min(980px, 96vw);
+                width: min(920px, 92vw);
                 max-height: 92vh;
                 overflow: auto;
                 background: var(--bg);
@@ -960,11 +1034,23 @@ const PROTOCOL_PARAMS = {
               .modal-grid {
                 display: grid;
                 grid-template-columns: 1fr;
-                gap: 14px;
+                row-gap: clamp(26px, 5vh, 48px);
+                column-gap: 14px;
+                width: 100%;
+              }
+              .modal-grid > * {
+                min-width: 0;
               }
               @media (min-width: 768px) {
                 .modal-grid {
                   grid-template-columns: 1fr 1fr;
+                  row-gap: 18px;
+                }
+              }
+              @media (max-width: 767px) {
+                .modal {
+                  width: 90vw;
+                  padding: 12px;
                 }
               }
               .modal-actions {
@@ -995,6 +1081,44 @@ const PROTOCOL_PARAMS = {
               }
               .entries-table th {
                 color: var(--muted);
+              }
+              .entry-view-btn {
+                border-radius: 8px;
+                padding: 6px 10px;
+                border: 1px solid var(--line);
+                background: transparent;
+                color: var(--text);
+                cursor: pointer;
+              }
+              .detail-id {
+                display: block;
+                margin: 8px 0;
+                font-size: 0.85rem;
+                color: var(--muted);
+                word-break: break-all;
+              }
+              .detail-links {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin: 10px 0 2px;
+              }
+              .detail-links a {
+                color: var(--text);
+              }
+              .detail-actions {
+                margin-top: 14px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+              }
+              .detail-actions button {
+                border-radius: 10px;
+                padding: 10px 14px;
+                border: 1px solid var(--line);
+                background: transparent;
+                color: var(--text);
+                cursor: pointer;
               }
               .footer {
                 margin-top: clamp(42px, 9vh, 110px);
@@ -1086,14 +1210,14 @@ const PROTOCOL_PARAMS = {
             entities.some((entity) => typeof entity.spoId === "string");
 
           const entriesTableRows = entities
-            .map((entity) => {
+            .map((entity, idx) => {
               const drepLink = typeof entity.drepId === "string"
                 ? `<a href="https://cardanoscan.io/dRep/${encodeURIComponent(entity.drepId)}" target="_blank" rel="noreferrer noopener">${entity.drepId}</a>`
                 : "-";
               const spoLink = typeof entity.spoId === "string"
                 ? `<a href="https://cardanoscan.io/pool/${encodeURIComponent(entity.spoId)}" target="_blank" rel="noreferrer noopener">${entity.spoId}</a>`
                 : "-";
-              return `<tr><td>${entity.name || "Unnamed"}</td><td>${drepLink}</td><td>${spoLink}</td></tr>`;
+              return `<tr><td>${entity.name || "Unnamed"}</td><td><button class="entry-view-btn" data-entity-index="${idx}" type="button">View</button></td><td>${drepLink}</td><td>${spoLink}</td></tr>`;
             })
             .join("");
 
@@ -1107,6 +1231,9 @@ const PROTOCOL_PARAMS = {
                   <div class="modal-grid">
                     <dotm-card id="random-spo-card"></dotm-card>
                     <dotm-card id="random-drep-card"></dotm-card>
+                  </div>
+                  <div class="pair-actions modal-pair-actions">
+                    <button id="random-delegate-both" class="delegate-both" type="button" ${walletConnected && randomDrep && randomSpo ? "" : "disabled"}>Delegate to Both</button>
                   </div>
                   ${randomAvailable ? "" : `<p class="modal-empty">No entities are available for random selection.</p>`}
                   <div class="modal-actions">
@@ -1128,14 +1255,72 @@ const PROTOCOL_PARAMS = {
                       <thead>
                         <tr>
                           <th>Name</th>
+                          <th>Actions</th>
                           <th>DRep (CardanoScan)</th>
                           <th>SPO (CardanoScan)</th>
                         </tr>
                       </thead>
                       <tbody>
-                        ${entriesTableRows || `<tr><td colspan="3">No entries available.</td></tr>`}
+                        ${entriesTableRows || `<tr><td colspan="4">No entries available.</td></tr>`}
                       </tbody>
                     </table>
+                  </div>
+                </div>
+              </div>`
+            : "";
+
+          const detailPrimaryId = detailEntity
+            ? (typeof detailEntity.drepId === "string" ? detailEntity.drepId : detailEntity.spoId)
+            : null;
+          const detailDrepLink = detailEntity && typeof detailEntity.drepId === "string"
+            ? `https://cardanoscan.io/dRep/${encodeURIComponent(detailEntity.drepId)}`
+            : null;
+          const detailSpoLink = detailEntity && typeof detailEntity.spoId === "string"
+            ? `https://cardanoscan.io/pool/${encodeURIComponent(detailEntity.spoId)}`
+            : null;
+
+          const detailPopupHtml = showEntityDetailPopup && detailEntity
+            ? `<div class="modal-backdrop" id="entity-detail-backdrop">
+                <div class="modal" role="dialog" aria-modal="true" aria-labelledby="entity-detail-title">
+                  <div class="modal-head">
+                    <h2 id="entity-detail-title">${detailEntity.name || "Entity Details"}</h2>
+                    <button id="entity-detail-close" class="modal-close" type="button">Close</button>
+                  </div>
+                  ${detailPrimaryId ? `<dotm-qr value="${detailPrimaryId}"></dotm-qr>` : ""}
+                  ${detailEntity.drepId ? `<small class="detail-id">DRep ID: ${detailEntity.drepId}</small>` : ""}
+                  ${detailEntity.spoId ? `<small class="detail-id">SPO ID: ${detailEntity.spoId}</small>` : ""}
+                  <div class="detail-links">
+                    ${detailDrepLink ? `<a href="${detailDrepLink}" target="_blank" rel="noreferrer noopener">DRep on CardanoScan</a>` : ""}
+                    ${detailSpoLink ? `<a href="${detailSpoLink}" target="_blank" rel="noreferrer noopener">SPO on CardanoScan</a>` : ""}
+                  </div>
+                  ${
+                    Array.isArray(detailEntity.bulletPoints) && detailEntity.bulletPoints.length
+                      ? `<ul>${detailEntity.bulletPoints.map((item) => `<li>${item}</li>`).join("")}</ul>`
+                      : `<p class="modal-empty">No notes yet.</p>`
+                  }
+                  ${
+                    Array.isArray(detailEntity.socials) && detailEntity.socials.length
+                      ? `<div class="detail-links">${detailEntity.socials
+                          .map((s) => `<a href="${s.url}" target="_blank" rel="noreferrer noopener">${s.platform || "social"}</a>`)
+                          .join("")}</div>`
+                      : ""
+                  }
+                  <div class="detail-actions">
+                    ${
+                      typeof detailEntity.drepId === "string"
+                        ? `<button id="detail-delegate-drep" type="button" ${walletConnected ? "" : "disabled"}>Delegate as DRep</button>`
+                        : ""
+                    }
+                    ${
+                      typeof detailEntity.spoId === "string"
+                        ? `<button id="detail-delegate-spo" type="button" ${walletConnected ? "" : "disabled"}>Delegate as SPO</button>`
+                        : ""
+                    }
+                    ${
+                      typeof detailEntity.drepId === "string" && typeof detailEntity.spoId === "string"
+                        ? `<button id="detail-delegate-both" class="delegate-both" type="button" ${walletConnected ? "" : "disabled"}>Delegate as Both</button>`
+                        : ""
+                    }
                   </div>
                 </div>
               </div>`
@@ -1159,6 +1344,9 @@ const PROTOCOL_PARAMS = {
               <dotm-card id="spo-card"></dotm-card>
               <dotm-card id="drep-card"></dotm-card>
             </section>
+            <section class="pair-actions">
+              <button id="month-delegate-both" class="delegate-both" type="button" ${walletConnected && snapshot.drep && snapshot.spo ? "" : "disabled"}>Delegate to Both</button>
+            </section>
             <section class="utility-row">
               <button id="open-random" class="utility-trigger" type="button">Choose Random DRep and SPO</button>
               <button id="open-entries" class="utility-trigger" type="button">View All Entries</button>
@@ -1170,6 +1358,7 @@ const PROTOCOL_PARAMS = {
             </section>
             ${popupHtml}
             ${entriesPopupHtml}
+            ${detailPopupHtml}
           `;
 
           const spoCard = root.getElementById("spo-card");
@@ -1177,20 +1366,26 @@ const PROTOCOL_PARAMS = {
           const previousButton = root.getElementById("previous");
           const currentButton = root.getElementById("current");
           const connectWalletButton = root.getElementById("connect-wallet");
+          const monthDelegateBothButton = root.getElementById("month-delegate-both");
           const openRandomButton = root.getElementById("open-random");
           const openEntriesButton = root.getElementById("open-entries");
           const randomCloseButton = root.getElementById("random-close");
           const randomSpinButton = root.getElementById("random-spin");
+          const randomDelegateBothButton = root.getElementById("random-delegate-both");
           const randomDrepCard = root.getElementById("random-drep-card");
           const randomSpoCard = root.getElementById("random-spo-card");
           const entriesCloseButton = root.getElementById("entries-close");
+          const entityDetailCloseButton = root.getElementById("entity-detail-close");
+          const detailDelegateDrepButton = root.getElementById("detail-delegate-drep");
+          const detailDelegateSpoButton = root.getElementById("detail-delegate-spo");
+          const detailDelegateBothButton = root.getElementById("detail-delegate-both");
 
           if (spoCard) {
             spoCard.data = {
               sectionTitle: "SPO of the Month",
               entry: snapshot.spo,
               walletConnected,
-              onDelegate: (entry) => this.delegate(entry)
+              onDelegate: (entry) => this.delegate(entry, this.getSingleDelegationMessage(entry))
             };
           }
 
@@ -1199,7 +1394,7 @@ const PROTOCOL_PARAMS = {
               sectionTitle: "DRep of the Month",
               entry: snapshot.drep,
               walletConnected,
-              onDelegate: (entry) => this.delegate(entry)
+              onDelegate: (entry) => this.delegate(entry, this.getSingleDelegationMessage(entry))
             };
           }
 
@@ -1216,6 +1411,18 @@ const PROTOCOL_PARAMS = {
           if (connectWalletButton) {
             connectWalletButton.disabled = walletConnected;
             connectWalletButton.addEventListener("click", () => this.showWalletPicker());
+          }
+
+          if (monthDelegateBothButton) {
+            monthDelegateBothButton.addEventListener("click", () => {
+              if (!snapshot.drep || !snapshot.spo) return;
+              const period = this.formatMonthYear(snapshot.drep.timestamp || snapshot.spo.timestamp);
+              this.delegateBoth(
+                snapshot.drep,
+                snapshot.spo,
+                `Delegate to DRep and SPO of the month for ${period}`
+              );
+            });
           }
 
           if (openRandomButton) {
@@ -1237,6 +1444,13 @@ const PROTOCOL_PARAMS = {
             });
           }
 
+          if (randomDelegateBothButton) {
+            randomDelegateBothButton.addEventListener("click", () => {
+              if (!randomDrep || !randomSpo) return;
+              this.delegateBoth(randomDrep, randomSpo, "Delegate to random DRep and SPO");
+            });
+          }
+
           if (entriesCloseButton) {
             entriesCloseButton.addEventListener("click", () => this.closeEntriesPopup());
           }
@@ -1246,7 +1460,7 @@ const PROTOCOL_PARAMS = {
               sectionTitle: "Random DRep",
               entry: randomDrep,
               walletConnected,
-              onDelegate: (entry) => this.delegate(entry)
+              onDelegate: (entry) => this.delegate(entry, "Delegate to random DRep")
             };
           }
 
@@ -1255,8 +1469,47 @@ const PROTOCOL_PARAMS = {
               sectionTitle: "Random SPO",
               entry: randomSpo,
               walletConnected,
-              onDelegate: (entry) => this.delegate(entry)
+              onDelegate: (entry) => this.delegate(entry, "Delegate to random SPO")
             };
+          }
+
+          root.querySelectorAll(".entry-view-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const idx = Number(btn.getAttribute("data-entity-index"));
+              if (!Number.isNaN(idx) && entities[idx]) this.openEntityDetailPopup(entities[idx]);
+            });
+          });
+
+          if (entityDetailCloseButton) {
+            entityDetailCloseButton.addEventListener("click", () => this.closeEntityDetailPopup());
+          }
+
+          if (detailDelegateDrepButton && detailEntity?.drepId) {
+            detailDelegateDrepButton.addEventListener("click", () =>
+              this.delegate(
+                { ...detailEntity, id: detailEntity.drepId, timestamp: new Date().toISOString() },
+                `Delegate to ${detailEntity.name || "entity"} as DRep`
+              )
+            );
+          }
+
+          if (detailDelegateSpoButton && detailEntity?.spoId) {
+            detailDelegateSpoButton.addEventListener("click", () =>
+              this.delegate(
+                { ...detailEntity, id: detailEntity.spoId, timestamp: new Date().toISOString() },
+                `Delegate to ${detailEntity.name || "entity"} as SPO`
+              )
+            );
+          }
+
+          if (detailDelegateBothButton && detailEntity?.drepId && detailEntity?.spoId) {
+            detailDelegateBothButton.addEventListener("click", () =>
+              this.delegateBoth(
+                { ...detailEntity, id: detailEntity.drepId, timestamp: new Date().toISOString() },
+                { ...detailEntity, id: detailEntity.spoId, timestamp: new Date().toISOString() },
+                `Delegate to ${detailEntity.name || "entity"} as DRep and SPO`
+              )
+            );
           }
 
           root.querySelectorAll(".wallet-option").forEach((btn) => {
