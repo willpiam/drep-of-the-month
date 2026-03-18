@@ -1,5 +1,8 @@
 import qrcode from "qrcode-generator";
 import { getCSL } from "./csl.js";
+import dotmQrStyles from "./dotm-qr.css?raw";
+import dotmCardStyles from "./dotm-card.css?raw";
+import dotmAppStyles from "./dotm-app.css?raw";
 
 /* ── Cardano mainnet constants (no external API needed) ── */
 const SHELLEY_START_UNIX = 1596491091;
@@ -174,27 +177,7 @@ const PROTOCOL_PARAMS = {
           const root = this.shadowRoot;
           if (!root) return;
 
-          const styles = `
-            <style>
-              .qr-wrap {
-                width: 180px;
-                min-height: 180px;
-                margin: 0 auto;
-                border: 1px solid var(--line);
-                border-radius: 12px;
-                background: #fff;
-                display: grid;
-                place-items: center;
-                overflow: hidden;
-              }
-              .empty {
-                font-size: 0.875rem;
-                color: #64748b;
-                text-align: center;
-                padding: 12px;
-              }
-            </style>
-          `;
+          const styles = `<style>${dotmQrStyles}</style>`;
 
           if (!value || typeof qrcode !== "function") {
             root.innerHTML = `${styles}<div class="qr-wrap"><div class="empty">QR unavailable</div></div>`;
@@ -264,93 +247,7 @@ const PROTOCOL_PARAMS = {
           const entry = payload.entry || null;
           const walletConnected = Boolean(payload.walletConnected);
 
-          const style = `
-            <style>
-              :host {
-                display: block;
-              }
-              .card {
-                background: var(--card);
-                border: 1px solid var(--line);
-                border-radius: var(--radius);
-                padding: 18px;
-                height: 100%;
-              }
-              h2 {
-                margin: 0 0 10px;
-                font-size: 1.1rem;
-              }
-              h3 {
-                margin: 0 0 6px;
-                font-size: 1.35rem;
-                line-height: 1.3;
-              }
-              .meta {
-                color: var(--muted);
-                font-size: 0.92rem;
-                margin-bottom: 12px;
-              }
-              .id {
-                display: block;
-                margin: 10px 0 14px;
-                font-size: 0.83rem;
-                color: var(--muted);
-                word-break: break-all;
-              }
-              .actions {
-                display: flex;
-                gap: 10px;
-                flex-wrap: wrap;
-                margin: 14px 0;
-              }
-              button,
-              a.action {
-                border-radius: 10px;
-                padding: 10px 14px;
-                border: 1px solid var(--line);
-                background: transparent;
-                color: var(--text);
-                text-decoration: none;
-                font-size: 0.9rem;
-                cursor: pointer;
-              }
-              button {
-                background: color-mix(in srgb, var(--accent) 22%, transparent);
-                border-color: color-mix(in srgb, var(--accent) 44%, var(--line));
-              }
-              button:disabled {
-                opacity: 0.45;
-                cursor: not-allowed;
-                background: transparent;
-                border-color: var(--line);
-              }
-              ul {
-                margin: 10px 0 0;
-                padding-left: 18px;
-              }
-              li {
-                margin: 5px 0;
-              }
-              .socials {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                margin-top: 12px;
-              }
-              .social {
-                font-size: 0.86rem;
-                padding: 6px 10px;
-                border-radius: 999px;
-                border: 1px solid var(--line);
-                color: var(--text);
-                text-decoration: none;
-              }
-              .empty {
-                color: var(--muted);
-                margin: 8px 0 0;
-              }
-            </style>
-          `;
+          const style = `<style>${dotmCardStyles}</style>`;
 
           if (!entry) {
             root.innerHTML = `
@@ -870,368 +767,7 @@ const PROTOCOL_PARAMS = {
             showAboutPopup
           } = this.state;
 
-          const style = `
-            <style>
-              .header {
-                margin-bottom: 18px;
-                position: relative;
-              }
-              h1 {
-                font-size: clamp(1.35rem, 2.2vw, 2rem);
-                margin: 0 0 8px;
-                line-height: 1.2;
-              }
-              .about-btn {
-                position: absolute;
-                top: 0;
-                right: 0;
-                border-radius: 50%;
-                width: 36px;
-                height: 36px;
-                border: 1px solid var(--line);
-                background: var(--card);
-                color: var(--text);
-                font-size: 1.1rem;
-                cursor: pointer;
-                display: grid;
-                place-items: center;
-                line-height: 1;
-              }
-              .about-btn:hover {
-                background: color-mix(in srgb, var(--accent) 14%, transparent);
-                border-color: color-mix(in srgb, var(--accent) 44%, var(--line));
-              }
-              .about-links {
-                list-style: none;
-                padding: 0;
-                margin: 14px 0 0;
-              }
-              .about-links li {
-                margin: 10px 0;
-                line-height: 1.5;
-              }
-              .about-links a {
-                color: var(--accent);
-                text-decoration: none;
-              }
-              .about-links a:hover {
-                text-decoration: underline;
-              }
-              .about-section {
-                margin-top: 16px;
-                padding-top: 14px;
-                border-top: 1px solid var(--line);
-              }
-              .about-section p {
-                margin: 6px 0;
-                font-size: 0.92rem;
-                color: var(--muted);
-                line-height: 1.5;
-              }
-              .subtitle {
-                color: var(--muted);
-                margin: 0;
-              }
-              .wallet-row {
-                margin-top: 12px;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                gap: 10px;
-              }
-              .wallet-btn {
-                border-radius: 10px;
-                padding: 10px 14px;
-                border: 1px solid var(--line);
-                cursor: pointer;
-                background: color-mix(in srgb, var(--accent) 22%, transparent);
-                border-color: color-mix(in srgb, var(--accent) 44%, var(--line));
-                color: var(--text);
-                font-size: 0.9rem;
-              }
-              .wallet-note {
-                color: var(--muted);
-                font-size: 0.88rem;
-              }
-              .wallet-address {
-                width: 100%;
-                font-size: 0.82rem;
-                color: var(--muted);
-                margin: 2px 0 0;
-                word-break: break-all;
-              }
-              .wallet-error {
-                width: 100%;
-                margin: 2px 0 0;
-                color: #f97316;
-                font-size: 0.85rem;
-              }
-              .wallet-picker {
-                width: 100%;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                margin-top: 8px;
-              }
-              .wallet-picker-label {
-                width: 100%;
-                font-size: 0.88rem;
-                color: var(--muted);
-                margin-bottom: 2px;
-              }
-              .wallet-option {
-                border-radius: 10px;
-                padding: 8px 14px;
-                border: 1px solid var(--line);
-                cursor: pointer;
-                background: var(--card);
-                color: var(--text);
-                font-size: 0.88rem;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-              }
-              .wallet-option:hover {
-                background: color-mix(in srgb, var(--accent) 14%, transparent);
-                border-color: color-mix(in srgb, var(--accent) 44%, var(--line));
-              }
-              .wallet-option img {
-                width: 24px;
-                height: 24px;
-                border-radius: 4px;
-              }
-              .grid {
-                display: grid;
-                grid-template-columns: 1fr;
-                row-gap: clamp(26px, 5vh, 48px);
-                column-gap: 14px;
-                align-items: start;
-              }
-              .utility-row {
-                margin-top: 18px;
-                display: flex;
-                justify-content: center;
-                gap: 10px;
-                flex-wrap: wrap;
-              }
-              .utility-trigger {
-                border-radius: 10px;
-                padding: 10px 14px;
-                border: 1px solid var(--line);
-                cursor: pointer;
-                background: color-mix(in srgb, var(--accent) 22%, transparent);
-                border-color: color-mix(in srgb, var(--accent) 44%, var(--line));
-                color: var(--text);
-                font-size: 0.9rem;
-              }
-              .delegate-both {
-                border-radius: 10px;
-                padding: 10px 14px;
-                border: 1px solid var(--line);
-                cursor: pointer;
-                background: color-mix(in srgb, var(--accent-2) 24%, transparent);
-                border-color: color-mix(in srgb, var(--accent-2) 44%, var(--line));
-                color: var(--text);
-                font-size: 0.9rem;
-              }
-              .delegate-both:disabled {
-                opacity: 0.45;
-                cursor: not-allowed;
-              }
-              .pair-actions {
-                margin-top: 12px;
-                display: flex;
-                justify-content: center;
-              }
-              .modal-pair-actions {
-                margin-top: clamp(28px, 7vh, 72px);
-              }
-              @media (min-width: 768px) {
-                .grid {
-                  grid-template-columns: 1fr 1fr;
-                  row-gap: 18px;
-                }
-              }
-              .modal-backdrop {
-                position: fixed;
-                inset: 0;
-                background: rgba(2, 6, 23, 0.7);
-                display: grid;
-                place-items: center;
-                padding: 20px;
-                z-index: 999;
-              }
-              .modal {
-                width: min(920px, 92vw);
-                max-height: 92vh;
-                overflow: auto;
-                background: var(--bg);
-                border: 1px solid var(--line);
-                border-radius: 16px;
-                padding: 16px;
-              }
-              .modal-head {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 8px;
-                margin-bottom: 12px;
-              }
-              .modal-head h2 {
-                margin: 0;
-                font-size: 1.2rem;
-              }
-              .modal-close,
-              .modal-spin {
-                border-radius: 10px;
-                padding: 10px 14px;
-                border: 1px solid var(--line);
-                cursor: pointer;
-                background: transparent;
-                color: var(--text);
-                font-size: 0.9rem;
-              }
-              .modal-grid {
-                display: grid;
-                grid-template-columns: 1fr;
-                row-gap: clamp(26px, 5vh, 48px);
-                column-gap: 14px;
-                width: 100%;
-              }
-              .modal-grid > * {
-                min-width: 0;
-              }
-              @media (min-width: 768px) {
-                .modal-grid {
-                  grid-template-columns: 1fr 1fr;
-                  row-gap: 18px;
-                }
-              }
-              @media (max-width: 767px) {
-                .modal {
-                  width: 90vw;
-                  padding: 12px;
-                }
-              }
-              .modal-actions {
-                margin-top: clamp(28px, 6vh, 64px);
-                display: flex;
-                justify-content: center;
-              }
-              .modal-empty {
-                color: var(--muted);
-                text-align: center;
-                margin-top: 8px;
-              }
-              .entries-table-wrap {
-                margin-top: 8px;
-                overflow-x: auto;
-              }
-              .entries-table {
-                width: 100%;
-                border-collapse: collapse;
-              }
-              .entries-table th,
-              .entries-table td {
-                border: 1px solid var(--line);
-                padding: 8px 10px;
-                text-align: left;
-                vertical-align: top;
-                font-size: 0.9rem;
-              }
-              .entries-table th {
-                color: var(--muted);
-              }
-              .entry-view-btn {
-                border-radius: 8px;
-                padding: 6px 10px;
-                border: 1px solid var(--line);
-                background: transparent;
-                color: var(--text);
-                cursor: pointer;
-              }
-              .detail-id {
-                display: block;
-                margin: 8px 0;
-                font-size: 0.85rem;
-                color: var(--muted);
-                word-break: break-all;
-              }
-              .detail-links {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                margin: 10px 0 2px;
-              }
-              .detail-links a {
-                color: var(--text);
-              }
-              .detail-actions {
-                margin-top: 14px;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-              }
-              .detail-actions button {
-                border-radius: 10px;
-                padding: 10px 14px;
-                border: 1px solid var(--line);
-                background: transparent;
-                color: var(--text);
-                cursor: pointer;
-              }
-              .footer {
-                margin-top: clamp(42px, 9vh, 110px);
-                display: flex;
-                gap: 10px;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: center;
-              }
-              .footer button {
-                border-radius: 10px;
-                padding: 10px 14px;
-                border: 1px solid var(--line);
-                cursor: pointer;
-                background: transparent;
-                color: var(--text);
-              }
-              .footer .primary {
-                background: color-mix(in srgb, var(--accent-2) 22%, transparent);
-                border-color: color-mix(in srgb, var(--accent-2) 44%, var(--line));
-              }
-              .status {
-                color: var(--muted);
-                font-size: 0.9rem;
-                width: 100%;
-                text-align: center;
-              }
-              .panel {
-                border: 1px solid var(--line);
-                border-radius: var(--radius);
-                padding: 16px;
-                background: var(--card);
-                color: var(--text);
-              }
-              .delegation-status {
-                margin-top: 14px;
-                padding: 12px 16px;
-                border-radius: 10px;
-                font-size: 0.9rem;
-                word-break: break-all;
-              }
-              .delegation-status.info {
-                background: color-mix(in srgb, var(--accent) 12%, transparent);
-                border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
-                color: var(--text);
-              }
-              .delegation-status.error {
-                background: color-mix(in srgb, #ef4444 12%, transparent);
-                border: 1px solid color-mix(in srgb, #ef4444 30%, var(--line));
-                color: #fca5a5;
-              }
-            </style>
-          `;
+          const style = `<style>${dotmAppStyles}</style>`;
 
           if (loading) {
             root.innerHTML = `${style}<section class="panel">Loading...</section>`;
@@ -1271,9 +807,9 @@ const PROTOCOL_PARAMS = {
 
           const entriesTableRows = entities
             .map((entity, idx) => {
-              const drepCheck = typeof entity.drepId === "string" ? `<span style="color:var(--accent-2)">&#10003;</span>` : "";
-              const spoCheck = typeof entity.spoId === "string" ? `<span style="color:var(--accent-2)">&#10003;</span>` : "";
-              return `<tr><td>${entity.name || "Unnamed"}</td><td><button class="entry-view-btn" data-entity-index="${idx}" type="button">View</button></td><td style="text-align:center">${drepCheck}</td><td style="text-align:center">${spoCheck}</td></tr>`;
+              const drepCheck = typeof entity.drepId === "string" ? `<span class="check-mark">&#10003;</span>` : "";
+              const spoCheck = typeof entity.spoId === "string" ? `<span class="check-mark">&#10003;</span>` : "";
+              return `<tr><td>${entity.name || "Unnamed"}</td><td><button class="entry-view-btn" data-entity-index="${idx}" type="button">View</button></td><td class="text-center">${drepCheck}</td><td class="text-center">${spoCheck}</td></tr>`;
             })
             .join("");
 
@@ -1418,12 +954,12 @@ const PROTOCOL_PARAMS = {
             ${detailPopupHtml}
             ${showAboutPopup
               ? `<div class="modal-backdrop" id="about-modal-backdrop">
-                  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="about-modal-title" style="max-width:560px">
+                  <div class="modal modal--about" role="dialog" aria-modal="true" aria-labelledby="about-modal-title">
                     <div class="modal-head">
                       <h2 id="about-modal-title">About This Project</h2>
                       <button id="about-close" class="modal-close" type="button">Close</button>
                     </div>
-                    <p style="margin:8px 0;font-size:0.92rem;color:var(--muted)">A community tool for discovering and delegating to Cardano DReps and Stake Pool Operators.</p>
+                    <p class="about-desc">A community tool for discovering and delegating to Cardano DReps and Stake Pool Operators.</p>
                     <ul class="about-links">
                       <li><a href="https://github.com/willpiam/drep-of-the-month" target="_blank" rel="noreferrer noopener">GitHub Repository</a></li>
                       <li><a href="https://projects.williamdoyle.ca" target="_blank" rel="noreferrer noopener">Other Projects by William</a></li>
@@ -1438,8 +974,8 @@ const PROTOCOL_PARAMS = {
                       <p><strong>Delegate to the creator</strong></p>
                       <p>William is a DRep under the ADA Handle <a href="https://handle.me/computerman" target="_blank" rel="noreferrer noopener">$computerman</a>.</p>
                       <p>DRep ID: <a href="https://cardanoscan.io/dRep/drep1yfpgzfymq6tt9c684e7vzata8r5pl4w84fmrjqeztdqw0sgpzw3nt" target="_blank" rel="noreferrer noopener">drep1yfpgzfymq6tt9c684e7vzata8r5pl4w84fmrjqeztdqw0sgpzw3nt</a></p>
-                      <div style="margin-top:10px">
-                        <button id="about-delegate-creator" type="button" ${walletConnected ? "" : "disabled"} title="${walletConnected ? "" : "Connect wallet to delegate"}" style="border-radius:10px;padding:10px 14px;border:1px solid var(--line);cursor:pointer;background:color-mix(in srgb, var(--accent) 22%, transparent);border-color:color-mix(in srgb, var(--accent) 44%, var(--line));color:var(--text);font-size:0.9rem">Delegate to William as DRep</button>
+                      <div class="about-delegate-wrap">
+                        <button id="about-delegate-creator" class="wallet-btn" type="button" ${walletConnected ? "" : "disabled"} title="${walletConnected ? "" : "Connect wallet to delegate"}">Delegate to William as DRep</button>
                       </div>
                     </div>
                   </div>

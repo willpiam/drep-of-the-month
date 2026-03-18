@@ -3,7 +3,7 @@
 Generate a randomized schedule.json for drep-of-the-month.
 
 Reads public/data.json, randomly assigns a drep-of-the-month and spo-of-the-month
-for each month from February 2026 to January 2027.
+for a default 3-month window starting February 2026.
 
 Constraints:
   - An entity cannot be both drep and spo of the month in the same month.
@@ -25,10 +25,10 @@ EXCLUDED_DREP_ID = "drep1yfpgzfymq6tt9c684e7vzata8r5pl4w84fmrjqeztdqw0sgpzw3nt"
 DATA_PATH = "public/data.json"
 OUTPUT_PATH = "public/schedule.json"
 
-# February 2026 through January 2027
+# Default generation window: February 2026 through April 2026 (3 months)
 MONTHS = [
     (2026, m) if m >= 2 else (2027, m)
-    for m in list(range(2, 13)) + [1]
+    for m in [2, 3, 4]
 ]
 
 

@@ -1,0 +1,18 @@
+.qr-wrap {
+  width: 180px;
+  min-height: 180px;
+  margin: 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.empty {
+  font-size: 0.875rem;
+  color: #64748b;
+  text-align: center;
+  padding: 12px;
+}

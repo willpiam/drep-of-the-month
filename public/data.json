@@ -105,7 +105,9 @@
       "name": "DAVE",
       "drepId": "drep1ygsgfhcydhlfglamhzkjn97rz3edef8a4z99fwl2frcwnrcmgurt3",
       "spoId": "pool1t6n7rysk6wzm9wqxda6zxpzmm3j6256fs3mp06dc26n6503hhj4",
-      "bulletPoints": [],
+      "bulletPoints": [
+        "Active on Cardano twitter"
+      ],
       "socials": [
         {
           "platform": "twitter",
@@ -240,6 +242,48 @@
       ]
     },
 
+   {
+      "name": "SMAUG",
+      "drepId": "drep1ytr0t0sxfl7qf99zd8x9dam8c0mqkemrtuekh4hekpd8fpqty2h5n",
+      "spoId": "pool14wk2m2af7y4gk5uzlsmsunn7d9ppldvcxxa5an9r5ywek8330fg",
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "website",
+          "url":"https://smaug.pool.pm/"
+        }
+      ]
+    },
+    {
+      "name": "Brian",
+      "drepId": "drep1yg7svuv02gh9j2q574jv06l4xnzwyp63effljze28qe993caj8ras",
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":"https://x.com/Brian67587820"
+        },
+        {
+          "platform": "website",
+          "url": "https://tickerbrian.com/"
+        }
+      ]
+    }, 
+    {
+      "name": "Sebastien Guillemot セバ",
+      "drepId": "drep1y2csyxt7u2hl4674pl9cef5lknafaw5nraxvyx033kmd0es3awuv0",
+      "spoId": null,
+      "bulletPoints": [
+        "CTO at the Midnight Foundation"
+      ],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":"https://x.com/SebastienGllmt"
+        }
+      ]
+    }, 
     {
       "name": "",
       "drepId": null,
@@ -251,6 +295,18 @@
           "url":""
         }
       ]
-    }
+    }, 
+    {
+      "name": "",
+      "drepId": null,
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url":""
+        }
+      ]
+    } 
   ]
 }
