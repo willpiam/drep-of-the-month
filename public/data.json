@@ -103,7 +103,7 @@
     },
     {
       "name": "DAVE",
-      "drepId": null,
+      "drepId": "drep1ygsgfhcydhlfglamhzkjn97rz3edef8a4z99fwl2frcwnrcmgurt3",
       "spoId": "pool1t6n7rysk6wzm9wqxda6zxpzmm3j6256fs3mp06dc26n6503hhj4",
       "bulletPoints": [],
       "socials": [
@@ -176,21 +176,7 @@
         }
       ]
     },
-
     {
-      "name": "Adam Dean",
-      "drepId": null,
-      "spoId": null,
-      "bulletPoints": [],
-      "socials": [
-        {
-          "platform": "twitter",
-          "url":"https://x.com/adamKDean"
-        }
-      ]
-    },
-
-     {
       "name": "Pi Lanningham",
       "drepId": "drep158mfwdv7lvqzg0yrdxwhsmkq5406nmvw4yvjyyfcawlwus2eylt",
       "spoId": "pool1x9q4jf3zwftwygeeulku8xtlywmtmzwxjk2g3fz3j5mlwjqnr3p",
@@ -209,9 +195,7 @@
         }
       ]
     },
-
-
-     {
+    {
       "name": "Bastian | SHARE",
       "drepId": "drep1ydwtnlvdd8atlj5c5ylgw4kg5e640vyt8resattrjmwufyg4qclf7",
       "spoId": "pool1af7dmzgcyp9kc5lyrtrtpsce58l6j5cjvc8wavkwmzlr53ym50v",
@@ -226,30 +210,32 @@
       ]
     },
 
-
     {
-      "name": "",
-      "drepId": null,
+      "name": "HOSKY",
+      "drepId": "drep1yf2jzhuc4f7eu2yay9d9ta3dykxxcwn34wz8kak7nhd7vcgrxn7ns",
       "spoId": null,
-      "bulletPoints": [],
+      "bulletPoints": [
+        "Woof"
+      ],
       "socials": [
         {
           "platform": "twitter",
-          "url":""
+          "url":"https://x.com/hoskytoken"
         }
       ]
     },
 
-
     {
-      "name": "",
-      "drepId": null,
+      "name": "WOLF31O2.md",
+      "drepId": "drep1yfa8r8r36x7x05htftce7qhafrn5nzzr6vazy95pzy6y5dqac0ss7",
       "spoId": null,
-      "bulletPoints": [],
+      "bulletPoints": [
+        "CEO of Blinklabs"
+      ],
       "socials": [
         {
           "platform": "twitter",
-          "url":""
+          "url":"https://x.com/wolf31o2"
         }
       ]
     },
