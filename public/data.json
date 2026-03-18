@@ -129,7 +129,10 @@
       "name": "Patrick Tobler",
       "drepId": "drep1ygm9wxzrrdqpt0hek5kj7ys6tmsc8dycp7tkjwqxqrhjr6csq3s3t",
       "spoId": null,
-      "bulletPoints": [],
+      "bulletPoints": [
+        "Founder and CEO of NMKR",
+        "Cares and is highly knowledgeable about Cardano"
+      ],
       "socials": [
         {
           "platform": "twitter",
@@ -174,7 +177,7 @@
       ]
     },
 
-     {
+    {
       "name": "Adam Dean",
       "drepId": null,
       "spoId": null,
@@ -209,10 +212,12 @@
 
 
      {
-      "name": "",
-      "drepId": null,
-      "spoId": null,
-      "bulletPoints": [],
+      "name": "Bastian | SHARE",
+      "drepId": "drep1ydwtnlvdd8atlj5c5ylgw4kg5e640vyt8resattrjmwufyg4qclf7",
+      "spoId": "pool1af7dmzgcyp9kc5lyrtrtpsce58l6j5cjvc8wavkwmzlr53ym50v",
+      "bulletPoints": [
+        "Constitutional delegate from Berlin in Buenos Aires 2024"
+      ],
       "socials": [
         {
           "platform": "twitter",

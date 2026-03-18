@@ -17,3 +17,7 @@ These entries are subject to change. If you have a problem with how I run this I
 Extend the existing schedule by N months
 
     python3 generate_schedule.py --continue 10
+
+## View how many entities are in our set
+
+    python3 count_roles.py
