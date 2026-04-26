@@ -1,6 +1,21 @@
 {
     "schedule": [
         {
+            "drepId": "drep1ygm9wxzrrdqpt0hek5kj7ys6tmsc8dycp7tkjwqxqrhjr6csq3s3t",
+            "spoId": "pool10fxpa6wkv0wc6wcmahcnz4wvvfx9m7547sevxrge3nfuv7yh8m0",
+            "timestamp": "2026-07-01T00:00:00Z"
+        },
+        {
+            "drepId": "drep1yftc8zs7gjcj4a9nxzplz4wg6cwweya0kxp8adnw59vsyrqvrysud",
+            "spoId": "pool14wk2m2af7y4gk5uzlsmsunn7d9ppldvcxxa5an9r5ywek8330fg",
+            "timestamp": "2026-06-01T00:00:00Z"
+        },
+        {
+            "drepId": "drep1ytr0t0sxfl7qf99zd8x9dam8c0mqkemrtuekh4hekpd8fpqty2h5n",
+            "spoId": "pool1j099ctc7kcc9fa78dz5qwsy2g0n96lrgletwxvxmyzh4zd7ck0j",
+            "timestamp": "2026-05-01T00:00:00Z"
+        },
+        {
             "drepId": "drep1yf2jzhuc4f7eu2yay9d9ta3dykxxcwn34wz8kak7nhd7vcgrxn7ns",
             "spoId": "pool1t6n7rysk6wzm9wqxda6zxpzmm3j6256fs3mp06dc26n6503hhj4",
             "timestamp": "2026-04-01T00:00:00Z"

@@ -286,14 +286,21 @@
       ]
     }, 
     {
-      "name": "",
-      "drepId": null,
-      "spoId": null,
-      "bulletPoints": [],
+      "name": "Peter Bui",
+      "drepId": "drep1yftc8zs7gjcj4a9nxzplz4wg6cwweya0kxp8adnw59vsyrqvrysud",
+      "spoId": "pool1vev8z03vh7jwx3mfrgzrt9fltt97nupaxv8ffj4r5r8mgwts5ze",
+      "bulletPoints": [
+        "Cardano & Midnight Ambassador",
+        "Australian" 
+      ],
       "socials": [
         {
           "platform": "twitter",
-          "url":""
+          "url":"https://x.com/astroboysoup"
+        },
+        {
+          "platform": "LinkTree",
+          "url": "https://linktr.ee/peterbui"
         }
       ]
     }, 
