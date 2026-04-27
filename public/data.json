@@ -7,7 +7,7 @@
       "bulletPoints": [
         "Constitutional delegate",
         "Developer - trying to push things forward wherever I can",
-        "In it for the long term", 
+        "In it for the long term",
         "Creator of drep-of-the-month"
       ],
       "socials": [
@@ -55,8 +55,8 @@
       "drepId": "drep1yfpazkd0aqex0kd3vrhk47sjy0jqgq3xu6h2zv9wevfequcxyynwv",
       "spoId": "pool1j099ctc7kcc9fa78dz5qwsy2g0n96lrgletwxvxmyzh4zd7ck0j",
       "bulletPoints": [
-        "Very active."
-        , "PRIDE leads #CardanoPride celebrations every June since 2021, and has donated $11k+ USD to 80+ causes and is a member of the Cardano Single Pool Alliance."
+        "Very active.",
+        "PRIDE leads #CardanoPride celebrations every June since 2021, and has donated $11k+ USD to 80+ causes and is a member of the Cardano Single Pool Alliance."
       ],
       "socials": [
         {
@@ -97,7 +97,7 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/Gnobudyspecial"
+          "url": "https://x.com/Gnobudyspecial"
         }
       ]
     },
@@ -111,7 +111,7 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/ItsDave_ADA"
+          "url": "https://x.com/ItsDave_ADA"
         }
       ]
     },
@@ -123,7 +123,7 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/lacepool_com"
+          "url": "https://x.com/lacepool_com"
         }
       ]
     },
@@ -138,7 +138,7 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/Padierfind"
+          "url": "https://x.com/Padierfind"
         }
       ]
     },
@@ -150,7 +150,7 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/LaPetiteADA"
+          "url": "https://x.com/LaPetiteADA"
         }
       ]
     },
@@ -162,7 +162,7 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/jonahkoch"
+          "url": "https://x.com/jonahkoch"
         }
       ]
     },
@@ -174,7 +174,7 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/HephyPool"
+          "url": "https://x.com/HephyPool"
         }
       ]
     },
@@ -189,11 +189,11 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/Quantumplation"
+          "url": "https://x.com/Quantumplation"
         },
         {
           "platform": "website",
-          "url":"http://314pool.com"
+          "url": "http://314pool.com"
         }
       ]
     },
@@ -207,11 +207,10 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":""
+          "url": ""
         }
       ]
     },
-
     {
       "name": "HOSKY",
       "drepId": "drep1yf2jzhuc4f7eu2yay9d9ta3dykxxcwn34wz8kak7nhd7vcgrxn7ns",
@@ -222,11 +221,10 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/hoskytoken"
+          "url": "https://x.com/hoskytoken"
         }
       ]
     },
-
     {
       "name": "WOLF31O2.md",
       "drepId": "drep1yfa8r8r36x7x05htftce7qhafrn5nzzr6vazy95pzy6y5dqac0ss7",
@@ -237,12 +235,11 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/wolf31o2"
+          "url": "https://x.com/wolf31o2"
         }
       ]
     },
-
-   {
+    {
       "name": "SMAUG",
       "drepId": "drep1ytr0t0sxfl7qf99zd8x9dam8c0mqkemrtuekh4hekpd8fpqty2h5n",
       "spoId": "pool14wk2m2af7y4gk5uzlsmsunn7d9ppldvcxxa5an9r5ywek8330fg",
@@ -250,7 +247,7 @@
       "socials": [
         {
           "platform": "website",
-          "url":"https://smaug.pool.pm/"
+          "url": "https://smaug.pool.pm/"
         }
       ]
     },
@@ -262,14 +259,14 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/Brian67587820"
+          "url": "https://x.com/Brian67587820"
         },
         {
           "platform": "website",
           "url": "https://tickerbrian.com/"
         }
       ]
-    }, 
+    },
     {
       "name": "Sebastien Guillemot セバ",
       "drepId": "drep1y2csyxt7u2hl4674pl9cef5lknafaw5nraxvyx033kmd0es3awuv0",
@@ -281,29 +278,45 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/SebastienGllmt"
+          "url": "https://x.com/SebastienGllmt"
         }
       ]
-    }, 
+    },
     {
       "name": "Peter Bui",
       "drepId": "drep1yftc8zs7gjcj4a9nxzplz4wg6cwweya0kxp8adnw59vsyrqvrysud",
       "spoId": "pool1vev8z03vh7jwx3mfrgzrt9fltt97nupaxv8ffj4r5r8mgwts5ze",
       "bulletPoints": [
         "Cardano & Midnight Ambassador",
-        "Australian" 
+        "Australian"
       ],
       "socials": [
         {
           "platform": "twitter",
-          "url":"https://x.com/astroboysoup"
+          "url": "https://x.com/astroboysoup"
         },
         {
           "platform": "LinkTree",
           "url": "https://linktr.ee/peterbui"
         }
       ]
-    }, 
+    },
+    {
+      "name": "phil_uplc",
+      "drepId": "drep1yg343cyuckglj48a6gpcey7fkfcy5x5f9g65wme3ne9q2mgaedmkm",
+      "spoId": null,
+      "bulletPoints": [
+        "CEO and founder of Anastasia Labs",
+        "Instrumental in the development of USDCx",
+        "Thoughtful leader in the Cardano community"
+      ],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": "https://x.com/phil_uplc"
+        }
+      ]
+    },
     {
       "name": "",
       "drepId": null,
@@ -312,9 +325,57 @@
       "socials": [
         {
           "platform": "twitter",
-          "url":""
+          "url": ""
         }
       ]
-    } 
+    },
+    {
+      "name": "",
+      "drepId": null,
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "",
+      "drepId": null,
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "",
+      "drepId": null,
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "",
+      "drepId": null,
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": ""
+        }
+      ]
+    }
   ]
 }
