@@ -322,7 +322,9 @@
       "name": "mr cata",
       "drepId": "drep1yfdfs28uwafjgmrkatdektlzrvha2cmvqjhuz700e04mawq23rmrg",
       "spoId": null,
-      "bulletPoints": [],
+      "bulletPoints": [
+        "Built a portfolio tracker with a focus on Cardano"
+      ],
       "socials": [
         {
           "platform": "twitter",
