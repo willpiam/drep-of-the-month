@@ -319,14 +319,18 @@
       ]
     },
     {
-      "name": "",
-      "drepId": null,
+      "name": "mr cata",
+      "drepId": "drep1yfdfs28uwafjgmrkatdektlzrvha2cmvqjhuz700e04mawq23rmrg",
       "spoId": null,
       "bulletPoints": [],
       "socials": [
         {
           "platform": "twitter",
-          "url": ""
+          "url": "https://x.com/mr_cata"
+        },
+        {
+          "platform": "website",
+          "url": "abettercryptotracker.com"
         }
       ]
     },
