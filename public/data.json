@@ -337,14 +337,17 @@
       ]
     },
     {
-      "name": "",
-      "drepId": null,
+      "name": "Mike Rogero (羅邁凱)",
+      "drepId": "drep1y2lhe7wn2sr6vme8gnca4jrkhv47uh3tklsykmrqvwzdq4g5s8wju",
       "spoId": null,
-      "bulletPoints": [],
+      "bulletPoints": [
+        "I met Mike at the Constitutional Convention in December 2024. He is a thoughtful person."
+        , "Active in the Cardano community"
+      ],
       "socials": [
         {
           "platform": "twitter",
-          "url": ""
+          "url": "https://x.com/mikerogero"
         }
       ]
     },
