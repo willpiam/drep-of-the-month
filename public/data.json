@@ -352,6 +352,42 @@
       ]
     },
     {
+      "name": "styg",
+      "drepId": "drep1yfaq8dsam7nusdccey2x2p684f6ulhr42pv24tslv0terqs3nq50q",
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": "https://x.com/styg50"
+        }
+      ]
+    },
+    {
+      "name": "Jurgen Proschinger",
+      "drepId": "drep1y2y3euudfnw48xeulsfupsttlx8c4xphhaw90d66dvcrazgjdm5uc",
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": "https://x.com/triangleforces"
+        }
+      ]
+    },
+    {
+      "name": "Agora",
+      "drepId": "drep1yt9dq806jcm56wzhnv2yrf6gcyq7h4gap8gxewfykk0dtfs7vf843",
+      "spoId": null,
+      "bulletPoints": [],
+      "socials": [
+        {
+          "platform": "twitter",
+          "url": "https://x.com/AgoraCardano"
+        }
+      ]
+    },
+    {
       "name": "",
       "drepId": null,
       "spoId": null,
