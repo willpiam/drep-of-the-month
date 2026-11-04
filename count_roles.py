@@ -2,8 +2,8 @@
 """
 Count DReps and SPOs from public/data.json.
 
-Counts are independent:
-- If an entity has both drepId and spoId, it is counted once in each category.
+Total only includes entities with a drepId, an spoId, or both.
+Role counts are independent: an entity with both ids is counted once in each.
 """
 
 import json
@@ -31,15 +31,15 @@ def main() -> None:
 
     entities = data.get("entities", [])
 
-    drep_count = sum(1 for e in entities if is_present(e.get("drepId")))
-    spo_count = sum(1 for e in entities if is_present(e.get("spoId")))
-    both_count = sum(
-        1
-        for e in entities
-        if is_present(e.get("drepId")) and is_present(e.get("spoId"))
-    )
+    has_drep = [is_present(e.get("drepId")) for e in entities]
+    has_spo = [is_present(e.get("spoId")) for e in entities]
 
-    print(f"Total entities: {len(entities)}")
+    drep_count = sum(has_drep)
+    spo_count = sum(has_spo)
+    both_count = sum(d and s for d, s in zip(has_drep, has_spo))
+    total_count = sum(d or s for d, s in zip(has_drep, has_spo))
+
+    print(f"Total entities: {total_count}")
     print(f"DReps: {drep_count}")
     print(f"SPOs: {spo_count}")
     print(f"Both DRep and SPO: {both_count}")
